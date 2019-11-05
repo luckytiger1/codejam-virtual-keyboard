@@ -82,17 +82,25 @@ const uniqueKeys = [
   'ControlLeft',
   'ControlRight'
 ];
-let lang = 'keyboard__english';
-let caseState = 'caseDown';
+let currentLang = 'keyboard__english';
+let currentCase = 'caseDown';
 let capsOn = false;
+let shiftLeftOn = false;
+let shiftRightOn = false;
+const keysContainer = document.createElement('div');
+keysContainer.className = 'keyboard';
+document.body.append(keysContainer);
 
-if (localStorage.lang === 'keyboard__russian') {
-  changeLang();
-}
-
+document.addEventListener('DOMContentLoaded', () => {
+  const input = document.createElement('textarea');
+  input.rows = '20';
+  input.cols = '100';
+  input.setAttribute('id', 'text-result');
+  document.body.prepend(input);
+});
 function createKeyboard() {
-  for (let i = 0; i < keyboardKeys.length; i++) {
-    let div = document.createElement('div');
+  for (let i = 0; i < keyboardKeys.length; i += 1) {
+    const div = document.createElement('div');
     div.classList.add('keyboard__key');
     div.classList.add(keyboardKeys[i][0]);
     div.insertAdjacentHTML(
@@ -109,56 +117,51 @@ function createKeyboard() {
     keysContainer.appendChild(div);
   }
 }
-{
-  /* <div class="keyboard__key KeyQ"><span class="keyboard__russian hidden">
-      <span class="caseDown hidden">Q</span>
-      <span class="caseUp hidden">й</span>
-      </span>
-      <span class="keyboard__english">
-      <span class="caseDown">q</span>
-      <span class="caseUp hidden">Q</span>
-      </span>
-      </div> */
-}
+
 function changeLang() {
   let rus = document.querySelectorAll('.keyboard__russian');
-  let eng = document.querySelectorAll('.' + lang);
-  for (let i = 0; i < eng.length; i++) {
+  let eng = document.querySelectorAll(`.${currentLang}`);
+  for (let i = 0; i < eng.length; i += 1) {
     eng[i].classList.toggle('hidden');
-    eng[i].querySelectorAll('.' + caseState)[0].classList.toggle('hidden');
+    eng[i].querySelectorAll(`.${currentCase}`)[0].classList.toggle('hidden');
   }
-  if (lang === 'Keyboard__english') {
-    lang = 'keyboard__russian';
-    localStorage.setItem('lang', 'keyboard__russian');
+  if (currentLang === 'Keyboard__english') {
+    currentLang = 'keyboard__russian';
+    localStorage.setItem('currentLang', 'keyboard__russian');
   } else {
-    lang = 'keyboard__english';
-    localStorage.setItem('lang', 'keyboard__english');
+    currentLang = 'keyboard__english';
+    localStorage.setItem('currentLang', 'keyboard__english');
   }
-  for (let i = 0; i < rus.length; i++) {
+  for (let i = 0; i < rus.length; i += 1) {
     rus[i].classList.toggle('hidden');
-    rus[i].querySelectorAll('.' + caseState)[0].classList.toggle('hidden');
+    rus[i].querySelectorAll(`.${currentCase}`)[0].classList.toggle('hidden');
   }
 }
-let keysContainer = document.createElement('div');
-keysContainer.className = 'keyboard';
-document.body.append(keysContainer);
-// document.body.insertAdjacentHTML(
-//   'afterBegin',
-//   '<textarea id="text-result" rows="20" cols="100"></textarea>'
-// );
-document.addEventListener('DOMContentLoaded', () => {
-  let input = document.createElement('textarea');
-  input.rows = '20';
-  input.cols = '100';
-  input.setAttribute('id', 'text-result');
-  document.body.prepend(input);
-});
+
+function changeCase() {
+  let langList = document.querySelectorAll(`.${currentLang}`);
+  for (let i = 0; i < langList.length; i += 1) {
+    langList[i].querySelectorAll('span')[0].classList.toggle('hidden');
+    langList[i].querySelectorAll('span')[1].classList.toggle('hidden');
+  }
+  if (currentCase === 'caseUp') {
+    currentCase = 'caseDown';
+  } else {
+    currentCase = 'caseUp';
+  }
+}
+
+if (localStorage.currentLang === 'keyboard__russian') {
+  changeLang();
+}
+
 document.addEventListener('keydown', event => {
   document.querySelector('#text-result').focus();
   let text = document.querySelector('#text-result');
-  let data = document.querySelectorAll('.' + event.code)[0];
-  if (event.ctrlKey && event.altKey) {
-    changeLang();
+  let data = document.querySelectorAll(`.${event.code}`)[0];
+  if (!data) {
+    event.preventDefault();
+    return;
   }
   if (uniqueKeys.includes(event.code) === false) {
     text.value += data.querySelectorAll(':not(.hidden)')[1].textContent;
@@ -174,6 +177,23 @@ document.addEventListener('keydown', event => {
         text.value += '\t';
         event.preventDefault();
         break;
+      case 'MetaLeft':
+        event.preventDefault();
+        break;
+      case 'ShiftLeft':
+        if (!shiftLeftOn && !shiftRightOn) {
+          data.classList.add('activated');
+          changeCase();
+          shiftLeftOn = true;
+        }
+        break;
+      case 'ShiftRight':
+        if (!shiftLeftOn && !shiftRightOn) {
+          data.classList.add('activated');
+          changeCase();
+          shiftRightOn = true;
+        }
+        break;
       case 'CapsLock':
         if (capsOn && event.repeat === false) {
           data.classList.remove('activated');
@@ -182,8 +202,14 @@ document.addEventListener('keydown', event => {
           data.classList.add('activated');
           capsOn = true;
         }
+        changeCase();
+        break;
+
       default:
     }
+  }
+  if (event.ctrlKey && event.altKey) {
+    changeLang();
   }
   if (
     event.code !== 'ShiftLeft' &&
@@ -196,9 +222,75 @@ document.addEventListener('keydown', event => {
 });
 
 document.addEventListener('keyup', event => {
-  let data = document.querySelectorAll('.' + event.code)[0];
+  let data = document.querySelectorAll(`.${event.code}`)[0];
   if (event.code !== 'CapsLock') {
     data.classList.remove('activated');
+  }
+  if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
+    changeCase();
+    if (event.code === 'ShiftLeft') {
+      shiftLeftOn = false;
+      data.classList.remove('activated');
+    } else if (event.code === 'ShiftRight') {
+      shiftRightOn = false;
+      data.classList.remove('activated');
+    }
+  }
+});
+
+document.addEventListener('mouseup', event => {
+  const { target } = event;
+  const text = document.querySelector('#text-result');
+  if (target.tagName !== 'SPAN') return;
+  const data = target.closest('div');
+  const keyCode = data.classList[1];
+  if (!uniqueKeys.includes(keyCode) && keyCode !== 'Space') {
+    text.value += target.textContent;
+  } else {
+    switch (keyCode) {
+      case 'Backspace':
+        text.value = text.value.substr(0, text.value.length - 1);
+        break;
+      case 'Enter':
+        text.value += '\n';
+        break;
+      case 'Space':
+        text.value += ' ';
+        break;
+      case 'Tab':
+        text.value += '\t';
+        event.preventDefault();
+        break;
+      case 'CapsLock':
+        if (capsOn) {
+          data.classList.remove('activated');
+          capsOn = false;
+        } else {
+          data.classList.add('activated');
+          capsOn = true;
+        }
+        changeCase();
+        break;
+      case 'ShiftLeft':
+        if (shiftLeftOn) {
+          changeCase();
+          shiftLeftOn = true;
+        }
+        break;
+      case 'ShiftRight':
+        if (shiftRightOn) {
+          changeCase();
+          shiftRightOn = true;
+        }
+        break;
+      default:
+    }
+  }
+  if (keyCode !== 'CapsLock') {
+    data.classList.add('activated');
+    setTimeout(() => {
+      data.classList.remove('activated');
+    }, 200);
   }
 });
 createKeyboard();

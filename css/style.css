@@ -451,6 +451,16 @@ html {
   background: rgba(255, 255, 255, 0.2);
 }
 
+.keyboard__key .caseDown,
+.keyboard__key .caseUp {
+  display: inline-block;
+  width: 100%;
+}
+
+.keyboard__key .hidden {
+  display: none;
+}
+
 .keyboard__key.activated {
   border-radius: 40px;
   background-color: #0ce679;

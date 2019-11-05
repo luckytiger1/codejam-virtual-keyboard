@@ -54,6 +54,7 @@ html {
   .ControlRight {
     background: #229496;
   }
+
   .Delete,
   .AltRight,
   .AltLeft,
@@ -82,6 +83,14 @@ html {
     transition: border-radius 0.3s, background 0.2s;
     &:hover {
       background: rgba(255, 255, 255, 0.2);
+    }
+    .caseDown,
+    .caseUp {
+      display: inline-block;
+      width: 100%;
+    }
+    .hidden {
+      display: none;
     }
   }
 }

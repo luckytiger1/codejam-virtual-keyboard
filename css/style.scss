@@ -1,0 +1,91 @@
+@import 'normalize.scss';
+
+#text-result {
+  display: block;
+  width: 60%;
+  height: 300px;
+  margin: 0 auto 10px;
+  padding: 10px;
+  font-size: 18px;
+  color: #444;
+  font-family: 'McLaren', cursive;
+  font-size: 1.5rem;
+}
+html {
+  background: url(../assets/img/bg.jpeg) no-repeat center center fixed;
+  background-size: cover;
+}
+.hidden {
+  display: none;
+}
+
+.keyboard {
+  display: grid;
+  grid-template-columns: repeat(46, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  width: 60%;
+  margin: 0 auto;
+  background: #004445;
+  user-select: none;
+  .Backspace,
+  .CapsLock,
+  .ShiftLeft {
+    background: #229496;
+    grid-column-end: span 7;
+  }
+  .ShiftRight {
+    background: #229496;
+    grid-column-end: span 6;
+  }
+  .Enter {
+    background: #229496;
+    grid-column-end: span 6;
+  }
+  .Space {
+    background: #229496;
+    grid-column-end: span 21;
+  }
+
+  .Tab,
+  .ControlLeft {
+    background: #229496;
+    grid-column-end: span 4;
+  }
+  .ControlRight {
+    background: #229496;
+  }
+  .Delete,
+  .AltRight,
+  .AltLeft,
+  .ArrowLeft,
+  .ArrowRight,
+  .ArrowUp,
+  .ArrowDown,
+  .MetaLeft {
+    background: #229496;
+    grid-column-end: span 3;
+  }
+  &__key {
+    grid-column-end: span 3;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 5px;
+    border: none;
+    margin: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    color: #ffffff;
+    outline: none;
+    font-family: 'McLaren', cursive;
+    font-size: 1.3rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-radius 0.3s, background 0.2s;
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+.keyboard__key.activated {
+  border-radius: 40px;
+  background-color: rgb(12, 230, 121);
+}

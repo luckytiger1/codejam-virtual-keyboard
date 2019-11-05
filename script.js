@@ -97,6 +97,9 @@ document.addEventListener('DOMContentLoaded', () => {
   input.cols = '100';
   input.setAttribute('id', 'text-result');
   document.body.prepend(input);
+  if (localStorage.currentLang === 'keyboard__russian') {
+    changeLang();
+  }
 });
 function createKeyboard() {
   for (let i = 0; i < keyboardKeys.length; i += 1) {
@@ -119,22 +122,32 @@ function createKeyboard() {
 }
 
 function changeLang() {
-  let rus = document.querySelectorAll('.keyboard__russian');
-  let eng = document.querySelectorAll(`.${currentLang}`);
-  for (let i = 0; i < eng.length; i += 1) {
-    eng[i].classList.toggle('hidden');
-    eng[i].querySelectorAll(`.${currentCase}`)[0].classList.toggle('hidden');
+  // let currentLang = 'keyboard__english';
+  let langList = document.querySelectorAll('.' + currentLang);
+
+  for (let i = 0; i < langList.length; i += 1) {
+    langList[i].classList.toggle('hidden');
+    langList[i]
+      .querySelectorAll(`.${currentCase}`)[0]
+      .classList.toggle('hidden');
   }
-  if (currentLang === 'Keyboard__english') {
+  if (currentLang === 'keyboard__english') {
     currentLang = 'keyboard__russian';
     localStorage.setItem('currentLang', 'keyboard__russian');
   } else {
     currentLang = 'keyboard__english';
     localStorage.setItem('currentLang', 'keyboard__english');
   }
-  for (let i = 0; i < rus.length; i += 1) {
-    rus[i].classList.toggle('hidden');
-    rus[i].querySelectorAll(`.${currentCase}`)[0].classList.toggle('hidden');
+  console.log(currentLang);
+  console.log(localStorage.currentLang);
+
+  let langList2 = document.querySelectorAll('.' + currentLang);
+
+  for (let i = 0; i < langList2.length; i += 1) {
+    langList2[i].classList.toggle('hidden');
+    langList2[i]
+      .querySelectorAll(`.${currentCase}`)[0]
+      .classList.toggle('hidden');
   }
 }
 
@@ -149,10 +162,6 @@ function changeCase() {
   } else {
     currentCase = 'caseUp';
   }
-}
-
-if (localStorage.currentLang === 'keyboard__russian') {
-  changeLang();
 }
 
 document.addEventListener('keydown', event => {
@@ -183,15 +192,15 @@ document.addEventListener('keydown', event => {
       case 'ShiftLeft':
         if (!shiftLeftOn && !shiftRightOn) {
           data.classList.add('activated');
-          changeCase();
           shiftLeftOn = true;
+          changeCase();
         }
         break;
       case 'ShiftRight':
         if (!shiftLeftOn && !shiftRightOn) {
           data.classList.add('activated');
-          changeCase();
           shiftRightOn = true;
+          changeCase();
         }
         break;
       case 'CapsLock':
@@ -208,9 +217,8 @@ document.addEventListener('keydown', event => {
       default:
     }
   }
-  if (event.ctrlKey && event.altKey) {
-    changeLang();
-  }
+  if (event.ctrlKey && event.altKey) changeLang();
+
   if (
     event.code !== 'ShiftLeft' &&
     event.code !== 'ShiftRight' &&
@@ -282,6 +290,9 @@ document.addEventListener('mouseup', event => {
           changeCase();
           shiftRightOn = true;
         }
+        break;
+      case 'MetaLeft':
+        changeLang();
         break;
       default:
     }

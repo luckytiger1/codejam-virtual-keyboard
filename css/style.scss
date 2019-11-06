@@ -1,5 +1,7 @@
 @import 'normalize.scss';
 
+$bg-color: #229496;
+
 #text-result {
   display: block;
   width: 60%;
@@ -30,29 +32,29 @@ html {
   .Backspace,
   .CapsLock,
   .ShiftLeft {
-    background: #229496;
+    background: $bg-color;
     grid-column-end: span 7;
   }
   .ShiftRight {
-    background: #229496;
+    background: $bg-color;
     grid-column-end: span 6;
   }
   .Enter {
-    background: #229496;
+    background: $bg-color;
     grid-column-end: span 6;
   }
   .Space {
-    background: #229496;
+    background: $bg-color;
     grid-column-end: span 21;
   }
 
   .Tab,
   .ControlLeft {
-    background: #229496;
+    background: $bg-color;
     grid-column-end: span 4;
   }
   .ControlRight {
-    background: #229496;
+    background: $bg-color;
   }
 
   .Delete,
@@ -63,7 +65,7 @@ html {
   .ArrowUp,
   .ArrowDown,
   .MetaLeft {
-    background: #229496;
+    background: $bg-color;
     grid-column-end: span 3;
   }
   &__key {

@@ -62,7 +62,7 @@ const keyboardKeys = [
   ['ArrowLeft', '◄', '◄', '◄', '◄'],
   ['ArrowDown', '▼', '▼', '▼', '▼'],
   ['ArrowRight', '►', '►', '►', '►'],
-  ['ControlRight', 'Ctrl', 'Ctrl', 'Ctrl', 'Ctrl']
+  ['ControlRight', 'Ctrl', 'Ctrl', 'Ctrl', 'Ctrl'],
 ];
 const uniqueKeys = [
   'Backspace',
@@ -80,7 +80,7 @@ const uniqueKeys = [
   'ArrowDown',
   'ArrowRight',
   'ControlLeft',
-  'ControlRight'
+  'ControlRight',
 ];
 let currentLang = 'keyboard__english';
 let currentCase = 'caseDown';
@@ -91,39 +91,43 @@ const keysContainer = document.createElement('div');
 keysContainer.className = 'keyboard';
 document.body.append(keysContainer);
 
-document.addEventListener('DOMContentLoaded', () => {
-  const input = document.createElement('textarea');
-  input.rows = '20';
-  input.cols = '100';
-  input.setAttribute('id', 'text-result');
-  document.body.prepend(input);
-  if (localStorage.currentLang === 'keyboard__russian') {
-    changeLang();
-  }
-});
 function createKeyboard() {
   for (let i = 0; i < keyboardKeys.length; i += 1) {
     const div = document.createElement('div');
     div.classList.add('keyboard__key');
     div.classList.add(keyboardKeys[i][0]);
-    div.insertAdjacentHTML(
-      'afterbegin',
-      `<span class="keyboard__russian hidden">
-      <span class="caseDown hidden">${keyboardKeys[i][3]}</span>
-      <span class="caseUp hidden">${keyboardKeys[i][4]}</span>
-      </span>
-      <span class="keyboard__english">
-      <span class="caseDown">${keyboardKeys[i][1]}</span>
-      <span class="caseUp hidden">${keyboardKeys[i][2]}</span>
-      </span>`
-    );
-    keysContainer.appendChild(div);
+    const spanRus = document.createElement('span');
+    spanRus.classList.add('keyboard__russian', 'hidden');
+    const spanRusDown = document.createElement('span');
+    spanRusDown.classList.add('caseDown', 'hidden');
+    // eslint-disable-next-line prefer-destructuring
+    spanRusDown.innerHTML = keyboardKeys[i][3];
+    const spanRusUp = document.createElement('span');
+    spanRusUp.classList.add('caseUp', 'hidden');
+    // eslint-disable-next-line prefer-destructuring
+    spanRusUp.innerHTML = keyboardKeys[i][4];
+    spanRus.prepend(spanRusDown);
+    spanRus.append(spanRusUp);
+    const spanEng = document.createElement('span');
+    spanEng.classList.add('keyboard__english');
+    const spanEngDown = document.createElement('span');
+    spanEngDown.classList.add('caseDown');
+    // eslint-disable-next-line prefer-destructuring
+    spanEngDown.innerHTML = keyboardKeys[i][1];
+    const spanEngUp = document.createElement('span');
+    spanEngUp.classList.add('caseUp', 'hidden');
+    // eslint-disable-next-line prefer-destructuring
+    spanEngUp.innerHTML = keyboardKeys[i][2];
+    spanEng.prepend(spanEngDown);
+    spanEng.append(spanEngUp);
+    div.prepend(spanRus);
+    div.append(spanEng);
+    keysContainer.append(div);
   }
 }
 
 function changeLang() {
-  // let currentLang = 'keyboard__english';
-  let langList = document.querySelectorAll('.' + currentLang);
+  const langList = document.querySelectorAll(`.${currentLang}`);
 
   for (let i = 0; i < langList.length; i += 1) {
     langList[i].classList.toggle('hidden');
@@ -138,10 +142,8 @@ function changeLang() {
     currentLang = 'keyboard__english';
     localStorage.setItem('currentLang', 'keyboard__english');
   }
-  console.log(currentLang);
-  console.log(localStorage.currentLang);
 
-  let langList2 = document.querySelectorAll('.' + currentLang);
+  const langList2 = document.querySelectorAll(`.${currentLang}`);
 
   for (let i = 0; i < langList2.length; i += 1) {
     langList2[i].classList.toggle('hidden');
@@ -152,7 +154,7 @@ function changeLang() {
 }
 
 function changeCase() {
-  let langList = document.querySelectorAll(`.${currentLang}`);
+  const langList = document.querySelectorAll(`.${currentLang}`);
   for (let i = 0; i < langList.length; i += 1) {
     langList[i].querySelectorAll('span')[0].classList.toggle('hidden');
     langList[i].querySelectorAll('span')[1].classList.toggle('hidden');
@@ -164,10 +166,20 @@ function changeCase() {
   }
 }
 
-document.addEventListener('keydown', event => {
+document.addEventListener('DOMContentLoaded', () => {
+  const input = document.createElement('textarea');
+  input.rows = '20';
+  input.cols = '100';
+  input.setAttribute('id', 'text-result');
+  document.body.prepend(input);
+  if (localStorage.currentLang === 'keyboard__russian') {
+    changeLang();
+  }
+});
+document.addEventListener('keydown', (event) => {
   document.querySelector('#text-result').focus();
-  let text = document.querySelector('#text-result');
-  let data = document.querySelectorAll(`.${event.code}`)[0];
+  const text = document.querySelector('#text-result');
+  const data = document.querySelectorAll(`.${event.code}`)[0];
   if (!data) {
     event.preventDefault();
     return;
@@ -185,6 +197,14 @@ document.addEventListener('keydown', event => {
       case 'Tab':
         text.value += '\t';
         event.preventDefault();
+        break;
+      case 'Delete':
+        if (text.selectionStart < text.value.length) {
+          text.value =
+            text.value.slice(0, text.selectionStart) +
+            text.value.slice(text.selectionStart + 1, text.value.length);
+          return;
+        }
         break;
       case 'MetaLeft':
         event.preventDefault();
@@ -229,8 +249,8 @@ document.addEventListener('keydown', event => {
   event.preventDefault();
 });
 
-document.addEventListener('keyup', event => {
-  let data = document.querySelectorAll(`.${event.code}`)[0];
+document.addEventListener('keyup', (event) => {
+  const data = document.querySelectorAll(`.${event.code}`)[0];
   if (event.code !== 'CapsLock') {
     data.classList.remove('activated');
   }
@@ -246,7 +266,7 @@ document.addEventListener('keyup', event => {
   }
 });
 
-document.addEventListener('mouseup', event => {
+document.addEventListener('mouseup', (event) => {
   const { target } = event;
   const text = document.querySelector('#text-result');
   if (target.tagName !== 'SPAN') return;

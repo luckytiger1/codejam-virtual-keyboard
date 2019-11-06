@@ -165,6 +165,18 @@ function changeCase() {
     currentCase = 'caseUp';
   }
 }
+function changeCaseCaps() {
+  const langList = document.querySelectorAll(`.${currentLang}`);
+  for (let i = 14; i < langList.length; i += 1) {
+    langList[i].querySelectorAll('span')[0].classList.toggle('hidden');
+    langList[i].querySelectorAll('span')[1].classList.toggle('hidden');
+  }
+  if (currentCase === 'caseUp') {
+    currentCase = 'caseDown';
+  } else {
+    currentCase = 'caseUp';
+  }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   const input = document.createElement('textarea');
@@ -231,7 +243,7 @@ document.addEventListener('keydown', (event) => {
           data.classList.add('activated');
           capsOn = true;
         }
-        changeCase();
+        changeCaseCaps();
         break;
 
       default:
@@ -297,7 +309,7 @@ document.addEventListener('mouseup', (event) => {
           data.classList.add('activated');
           capsOn = true;
         }
-        changeCase();
+        changeCaseCaps();
         break;
       case 'ShiftLeft':
         if (shiftLeftOn) {
